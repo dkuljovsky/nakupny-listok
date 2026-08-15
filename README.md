@@ -1,75 +1,63 @@
-# React + TypeScript + Vite
+# Nákupný lístok
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A minimal, mobile-friendly shopping list PWA built with React, TypeScript and Vite. Items sync in realtime with [PocketBase](https://pocketbase.io/) and update optimistically in the UI.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **TypeScript** + **Vite**
+- [**PocketBase**](https://pocketbase.io/) — backend / auth / realtime
+- [**TanStack Query**](https://tanstack.com/query) — data fetching, mutations, optimistic updates
+- [**Zustand**](https://zustand-docs.pmnd.rs/) — auth state
+- [**vite-plugin-pwa**](https://vite-pwa-org.netlify.app/) — installable offline-ready PWA
+- **CSS** — nested styles with a `:root` token system and `light-dark()` dark mode
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Email/password login via PocketBase `users` collection
+- Protected `/dashboard` route (redirects when unauthenticated)
+- Add, toggle (bought), and delete grocery items
+- **Realtime** updates via PocketBase subscriptions
+- **Optimistic updates** for create, toggle, and delete
+- **PWA** — installable, standalone, offline overlay
+- **Dark mode** via system preference
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Install dependencies
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+bun install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Configure PocketBase
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Run a PocketBase instance (e.g. `./pocketbase serve` on `127.0.0.1:8090`) and create:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- A **users** collection (PocketBase's default auth collection)
+- A **grocery_items** collection with fields: `text` (text), `bought` (bool), `user` (relation → users)
 
+Then set the API URL in `.env` (defaults to `http://127.0.0.1:8090`):
+
+```bash
+VITE_POCKETBASE_URL=http://127.0.0.1:8090
+```
+
+### 3. Run
+
+```bash
+bun run dev      # development server
+bun run build    # type-check + production build (emits PWA assets)
+bun run preview  # preview the production build
+bun run lint     # ESLint
+```
+
+## Project structure
+
+```
+src/
+  components/   # Item, ItemForm, ProtectedRoute, OfflineOverlay
+  hooks/        # useItems (query + mutations + realtime)
+  lib/          # pocketbase client singleton
+  pages/        # Dashboard, Login
+  stores/       # auth store (syncs with pb.authStore)
 ```
