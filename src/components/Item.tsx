@@ -1,5 +1,10 @@
 import type { Item } from "../hooks/useItems";
 
+const timeFormat = new Intl.DateTimeFormat("sk-SK", {
+  dateStyle: "short",
+  timeStyle: "short",
+});
+
 type Props = {
   item: Item;
   onToggle: (id: string) => void;
@@ -10,10 +15,7 @@ export default function Item({ item, onToggle, onDelete }: Props) {
   function parseTime(time: string) {
     if (!time) return "";
 
-    return new Intl.DateTimeFormat("sk-SK", {
-      dateStyle: "short",
-      timeStyle: "short",
-    }).format(new Date(time));
+    return timeFormat.format(new Date(time));
   }
 
   function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
