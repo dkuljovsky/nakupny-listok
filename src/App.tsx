@@ -19,7 +19,7 @@ function App() {
             </GuestRoute>
           }
         />
-<Route
+        <Route
           path="/"
           element={
             <ProtectedRoute>
