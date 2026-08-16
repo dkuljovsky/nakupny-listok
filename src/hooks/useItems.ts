@@ -44,6 +44,8 @@ export default function useItems() {
           case "create": {
             queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) => {
               const items = old ?? [];
+              if (items.some((item) => item.id === record.id)) return items;
+
               const myTempCreatedItemIndex = items.findIndex(
                 (item) =>
                   item.temp &&
