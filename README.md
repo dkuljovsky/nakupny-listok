@@ -14,7 +14,7 @@ A minimal, mobile-friendly shopping list PWA built with React, TypeScript and Vi
 ## Features
 
 - Email/password login via PocketBase `users` collection
-- Protected `/dashboard` route (redirects when unauthenticated)
+- Protected `/` route (redirects when unauthenticated)
 - Add, toggle (bought), and delete grocery items
 - **Realtime** updates via PocketBase subscriptions
 - **Optimistic updates** for create, toggle, and delete
