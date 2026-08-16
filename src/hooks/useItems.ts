@@ -34,9 +34,50 @@ export default function useItems() {
   });
 
   useEffect(() => {
-    pb.collection("grocery_items").subscribe("*", () => {
-      queryClient.invalidateQueries({ queryKey: ITEMS_KEY });
-    });
+    pb.collection("grocery_items").subscribe(
+      "*",
+      (event) => {
+        const record = event.record as unknown as Item;
+
+        switch (event.action) {
+          case "create": {
+            queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) => {
+              const items = old ?? [];
+              if (items.some((item) => item.id === record.id)) return items;
+              return [
+                ...items.filter(
+                  (item) =>
+                    !(
+                      item.text === record.text &&
+                      item.user === record.user &&
+                      item.bought === record.bought
+                    ),
+                ),
+                record,
+              ];
+            });
+            break;
+          }
+          case "update": {
+            queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) =>
+              (old ?? []).map((item) =>
+                item.id === record.id ? record : item,
+              ),
+            );
+            break;
+          }
+          case "delete": {
+            queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) =>
+              (old ?? []).filter((item) => item.id !== record.id),
+            );
+            break;
+          }
+        }
+      },
+      {
+        expand: "user",
+      },
+    );
 
     return () => {
       pb.collection("grocery_items").unsubscribe("*");
@@ -71,11 +112,13 @@ export default function useItems() {
 
       const createdItem = { ...created, expand: context.tempItem.expand };
 
-      queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) =>
-        old.map((item) =>
-          item.id === context.tempItem.id ? createdItem : item,
+      queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) => [
+        ...(old ?? []).filter(
+          (item) =>
+            item.id !== context.tempItem.id && item.id !== createdItem.id,
         ),
-      );
+        createdItem,
+      ]);
     },
     onError: (_err, _item, context) => {
       if (context?.previousItems) {

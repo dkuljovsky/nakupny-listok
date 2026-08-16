@@ -8,7 +8,7 @@ A minimal, mobile-friendly shopping list PWA built with React, TypeScript and Vi
 - [**PocketBase**](https://pocketbase.io/) — backend / auth / realtime
 - [**TanStack Query**](https://tanstack.com/query) — data fetching, mutations, optimistic updates
 - [**Zustand**](https://zustand-docs.pmnd.rs/) — auth state
-- [**vite-plugin-pwa**](https://vite-pwa-org.netlify.app/) — installable offline-ready PWA
+- [**vite-plugin-pwa**](https://vite-pwa-org.netlify.app/) — PWA support
 - **CSS** — nested styles with a `:root` token system and `light-dark()` dark mode
 
 ## Features
