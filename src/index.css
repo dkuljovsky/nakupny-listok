@@ -270,6 +270,49 @@ body {
   }
 }
 
+.error-boundary {
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--text);
+
+  .error-boundary-card {
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h1 {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 12px;
+      background: var(--black);
+      border: 0;
+      color: var(--white);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  }
+}
+
 .offline-overlay {
   position: fixed;
   inset: 0;
