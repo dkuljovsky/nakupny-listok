@@ -13,6 +13,7 @@ export type Item = {
   created: string;
   updated: string;
   user: string;
+  temp?: boolean;
   expand: {
     user: User;
   };
@@ -43,18 +44,19 @@ export default function useItems() {
           case "create": {
             queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) => {
               const items = old ?? [];
-              if (items.some((item) => item.id === record.id)) return items;
-              return [
-                ...items.filter(
-                  (item) =>
-                    !(
-                      item.text === record.text &&
-                      item.user === record.user &&
-                      item.bought === record.bought
-                    ),
-                ),
-                record,
-              ];
+              const myTempCreatedItemIndex = items.findIndex(
+                (item) =>
+                  item.temp &&
+                  item.bought === record.bought &&
+                  item.text === record.text &&
+                  item.user === record.user,
+              );
+
+              if (myTempCreatedItemIndex === -1) return [...items, record];
+
+              return items.map((item, index) =>
+                index === myTempCreatedItemIndex ? record : item,
+              );
             });
             break;
           }
@@ -98,6 +100,7 @@ export default function useItems() {
         created: new Date().toISOString(),
         updated: new Date().toISOString(),
         expand: { user: { name: pb.authStore.record?.name } },
+        temp: true,
       };
 
       queryClient.setQueryData<Item[]>(ITEMS_KEY, (old = []) => [
@@ -125,9 +128,6 @@ export default function useItems() {
         queryClient.setQueryData(ITEMS_KEY, context.previousItems);
       }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ITEMS_KEY });
-    },
   });
 
   const { mutate: updateItem, status: updateItemStatus } = useMutation({
@@ -149,9 +149,6 @@ export default function useItems() {
         queryClient.setQueryData(ITEMS_KEY, context.previousItems);
       }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ITEMS_KEY });
-    },
   });
 
   const { mutate: deleteItem, status: deleteItemStatus } = useMutation({
@@ -171,9 +168,6 @@ export default function useItems() {
       if (context?.previousItems) {
         queryClient.setQueryData(ITEMS_KEY, context.previousItems);
       }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ITEMS_KEY });
     },
   });
 
