@@ -1,17 +1,33 @@
 import Item from "../components/Item";
 import ItemForm from "../components/ItemForm";
+import Trips from "../components/Trips";
 import { useAuthStore } from "../stores/auth";
 import useItems from "../hooks/useItems";
+import useTrips from "../hooks/useTrips";
 
 export default function Dashboard() {
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const { items, itemsStatus, addItem, updateItem, addItemStatus, deleteItem } =
     useItems();
+  const {
+    trips,
+    status: tripsStatus,
+    activeTrip,
+    setActiveTrip,
+    addTrip,
+    deleteTrip,
+  } = useTrips();
 
   function handleAdd(text: string) {
     if (!user) return;
-    addItem({ text, bought: false, user: user.id });
+
+    addItem({ text, bought: false, user: user.id, trip: activeTrip ?? "" });
+  }
+
+  function handleAddTrip(name: string) {
+    if (!user) return;
+    addTrip({ name });
   }
 
   function toggleItem(id: string) {
@@ -19,9 +35,14 @@ export default function Dashboard() {
     if (item) updateItem({ id, bought: !item.bought });
   }
 
-  const boughtItems = (items ?? []).filter((item) => item.bought);
+  const filteredItems = (items ?? []).filter((item) => {
+    if (activeTrip === null) return item.trip === "";
 
-  const remainingItems = (items ?? []).filter((item) => !item.bought);
+    return activeTrip === item.trip;
+  });
+
+  const boughtItems = filteredItems.filter((item) => item.bought);
+  const remainingItems = filteredItems.filter((item) => !item.bought);
 
   if (itemsStatus === "pending")
     return <p className="items-loading">Načítavam...</p>;
@@ -37,6 +58,15 @@ export default function Dashboard() {
       </header>
 
       <section className="list">
+        <Trips
+          items={trips ?? []}
+          status={tripsStatus}
+          activeTrip={activeTrip}
+          onSelectTrip={setActiveTrip}
+          onAddTrip={handleAddTrip}
+          onDeleteTrip={deleteTrip}
+        />
+
         {items?.length === 0 && (
           <p className="items-empty">
             Zatiaľ nie je žiadna položka na zozname.
@@ -55,7 +85,6 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-
         <div className="list-group bought">
           <h2>Kúpené</h2>
           <div className="list-items">
@@ -70,7 +99,6 @@ export default function Dashboard() {
           </div>
         </div>
       </section>
-
       <ItemForm onSubmit={handleAdd} disabled={addItemStatus === "pending"} />
     </main>
   );

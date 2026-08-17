@@ -25,6 +25,7 @@ export default function ItemForm({ onSubmit, disabled }: Props) {
       <input
         ref={inputRef}
         type="text"
+        spellCheck="false"
         required
         placeholder="Pridať položku..."
       />

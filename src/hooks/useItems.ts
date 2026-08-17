@@ -14,6 +14,7 @@ export type Item = {
   updated: string;
   user: string;
   temp?: boolean;
+  trip: string;
   expand: {
     user: User;
   };
@@ -28,10 +29,8 @@ export default function useItems() {
 
   const { data: items, status: itemsStatus } = useQuery<Item[]>({
     queryKey: ITEMS_KEY,
-    queryFn: async () =>
-      (await pb
-        .collection("grocery_items")
-        .getFullList({ expand: "user" })) as Item[],
+    queryFn: () =>
+      pb.collection<Item>("grocery_items").getFullList({ expand: "user" }),
   });
 
   useEffect(() => {

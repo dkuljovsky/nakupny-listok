@@ -29,8 +29,20 @@ export default function Login() {
     <main className="login-wrapper">
       <form className="login-card" onSubmit={handleLogin}>
         <h1>Nákupný lístok</h1>
-        <input type="email" name="email" placeholder="Email" required />
-        <input type="password" name="password" placeholder="Heslo" required />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          required
+          autoComplete="email"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Heslo"
+          required
+          autoComplete="current-password"
+        />
         <button type="submit" disabled={isLoading}>
           Prihlásiť sa
         </button>
