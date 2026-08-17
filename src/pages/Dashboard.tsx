@@ -67,7 +67,7 @@ export default function Dashboard() {
           onDeleteTrip={deleteTrip}
         />
 
-        {items?.length === 0 && (
+        {filteredItems?.length === 0 && (
           <p className="items-empty">
             Zatiaľ nie je žiadna položka na zozname.
           </p>

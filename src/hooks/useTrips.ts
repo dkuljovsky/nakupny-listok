@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { pb } from "../lib/pocketbase";
 
 export type Trip = {
@@ -15,8 +16,23 @@ export type NewTrip = Omit<Trip, "id" | "created" | "updated">;
 const TRIPS_KEY = ["trips"] as const;
 
 export default function useTrips() {
-  const [activeTrip, setActiveTrip] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+
+  const activeTrip = searchParams.get("trip");
+
+  const activeTripRef = useRef(activeTrip);
+
+  useEffect(() => {
+    activeTripRef.current = activeTrip;
+  }, [activeTrip]);
+
+  const setActiveTrip = useCallback(
+    (trip: string | null) => {
+      setSearchParams(trip === null ? {} : { trip }, { replace: true });
+    },
+    [setSearchParams],
+  );
 
   const { data: trips, status } = useQuery({
     queryKey: TRIPS_KEY,
@@ -52,7 +68,7 @@ export default function useTrips() {
           queryClient.setQueryData<Trip[]>(TRIPS_KEY, (old = []) =>
             old.filter((trip) => trip.id !== record.id),
           );
-          if (activeTrip === record.id) setActiveTrip(null);
+          if (activeTripRef.current === record.id) setActiveTrip(null);
           break;
         }
       }
@@ -61,7 +77,7 @@ export default function useTrips() {
     return () => {
       pb.collection("grocery_trips").unsubscribe("*");
     };
-  }, [queryClient, activeTrip]);
+  }, [queryClient, setActiveTrip]);
 
   const { mutate: addTrip, status: addTripStatus } = useMutation({
     mutationFn: async (trip: NewTrip) =>
