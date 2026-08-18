@@ -75,9 +75,10 @@ export default function Item({ item, onToggle, onDelete }: Props) {
         onTouchEnd={onTouchEnd}
       >
         <h3>{item.text}</h3>
-        <span className="user">
-          pridal {item?.expand?.user?.name}, {parseRelativeTime(item?.created)}
-        </span>
+        <div className="list-item-meta">
+          <span className="user">{item?.expand?.user?.name}</span>,{" "}
+          {parseRelativeTime(item?.created)}
+        </div>
         <button className="list-item-delete" onClick={handleDelete}>
           Odstrániť
         </button>
