@@ -99,6 +99,7 @@ body {
 
     .list-group {
       padding-block: 16px;
+      view-transition-name: list-group;
 
       .list-items {
         display: contents;
@@ -446,4 +447,45 @@ body {
   color: var(--text-faint);
   text-align: center;
   margin-top: 48px;
+}
+
+::view-transition-old(list-group),
+::view-transition-new(list-group) {
+  animation-duration: 0.25s;
+}
+
+::view-transition-old(list-group) {
+  animation-name: vt-fade-out;
+}
+
+::view-transition-new(list-group) {
+  animation-name: vt-fade-in;
+  transform-origin: top;
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(list-group),
+  ::view-transition-new(list-group) {
+    animation-duration: 0.01ms;
+  }
 }

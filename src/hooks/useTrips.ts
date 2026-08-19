@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import { flushSync } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { pb } from "../lib/pocketbase";
@@ -29,7 +30,16 @@ export default function useTrips() {
 
   const setActiveTrip = useCallback(
     (trip: string | null) => {
-      setSearchParams(trip === null ? {} : { trip }, { replace: true });
+      const apply = () =>
+        setSearchParams(trip === null ? {} : { trip }, { replace: true });
+
+      if ("startViewTransition" in document) {
+        document.startViewTransition(() => {
+          flushSync(apply);
+        });
+      } else {
+        apply();
+      }
     },
     [setSearchParams],
   );
