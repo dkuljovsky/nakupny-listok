@@ -57,16 +57,16 @@ export default function Dashboard() {
         <button onClick={logout}>Odhlásiť sa</button>
       </header>
 
-      <section className="list">
-        <Trips
-          items={trips ?? []}
-          status={tripsStatus}
-          activeTrip={activeTrip}
-          onSelectTrip={setActiveTrip}
-          onAddTrip={handleAddTrip}
-          onDeleteTrip={deleteTrip}
-        />
+      <Trips
+        items={trips ?? []}
+        status={tripsStatus}
+        activeTrip={activeTrip}
+        onSelectTrip={setActiveTrip}
+        onAddTrip={handleAddTrip}
+        onDeleteTrip={deleteTrip}
+      />
 
+      <section className="list">
         {filteredItems?.length === 0 && (
           <p className="items-empty">
             Zatiaľ nie je žiadna položka na zozname.

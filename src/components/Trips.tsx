@@ -72,6 +72,9 @@ function Trips({
   onAddTrip,
   onDeleteTrip,
 }: TripsProps) {
+  const visibleItems = items.length < 4 ? items : items.slice(0, 4);
+  const rest = items.length > 4 ? items.slice(4) : [];
+
   return (
     <div className="trips-tabs">
       <label>
@@ -84,7 +87,8 @@ function Trips({
           onChange={() => onSelectTrip(null)}
         />
       </label>
-      {items.map((trip) => (
+
+      {visibleItems.map((trip) => (
         <TripTab
           key={trip.id}
           trip={trip}
@@ -93,7 +97,46 @@ function Trips({
           onDelete={() => onDeleteTrip(trip.id)}
         />
       ))}
+      {!!rest.length && (
+        <RestItemsSelect
+          items={rest}
+          activeTrip={activeTrip}
+          onSelectTrip={onSelectTrip}
+        />
+      )}
       <AddTripForm onAddTrip={onAddTrip} />
+    </div>
+  );
+}
+
+function RestItemsSelect({
+  items,
+  activeTrip,
+  onSelectTrip,
+}: {
+  items: Trip[];
+  activeTrip: string | null;
+  onSelectTrip: (id: string) => void;
+}) {
+  const selectedTrip = items.find((trip) => trip.id === activeTrip);
+  const selected = selectedTrip?.id ?? "";
+
+  return (
+    <div className="trips-select-wrap">
+      <select
+        className={selected ? "trips-select has-selection" : "trips-select"}
+        value={selected}
+        onChange={(e) => onSelectTrip(e.target.value)}
+      >
+        <option value="" disabled hidden>
+          Ďalšie
+        </option>
+        {items.map((trip) => (
+          <option key={trip.id} value={trip.id}>
+            {trip.name}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
@@ -117,6 +160,7 @@ function AddTripForm({ onAddTrip }: { onAddTrip: (name: string) => void }) {
         type="text"
         placeholder="+ Nový trip"
         spellCheck="false"
+        required
       />
       <button>Pridať</button>
     </form>
