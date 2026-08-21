@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { pb } from "../lib/pocketbase";
+import { queryClient } from "../lib/queryClient";
 
 export type User = {
   id: string;
@@ -40,6 +41,7 @@ export const useAuthStore = create<AuthState & AuthActions>()((set) => {
     },
     logout: () => {
       pb.authStore.clear();
+      queryClient.clear();
     },
   };
 });
