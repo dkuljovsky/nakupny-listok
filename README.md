@@ -34,7 +34,8 @@ bun install
 Run a PocketBase instance (e.g. `./pocketbase serve` on `127.0.0.1:8090`) and create:
 
 - A **users** collection (PocketBase's default auth collection)
-- A **grocery_items** collection with fields: `text` (text), `bought` (bool), `user` (relation → users)
+- A **grocery_trips** collection with field `name`
+- A **grocery_items** collection with fields: `text` (text), `bought` (bool), `user` (relation → users), `trip` (relation → grocery_trips)
 
 Then set the API URL in `.env` (defaults to `http://127.0.0.1:8090`):
 
