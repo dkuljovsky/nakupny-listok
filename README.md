@@ -61,3 +61,12 @@ src/
   pages/        # Dashboard, Login
   stores/       # auth store (syncs with pb.authStore)
 ```
+
+## Live instance
+
+Live test instance is running at [https://nakupny-list.pages.dev/](https://nakupny-list.pages.dev/)
+
+Guest credentials:
+
+- Email: `guest@example.net`
+- Password: `guest123`
